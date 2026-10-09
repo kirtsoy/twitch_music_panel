@@ -646,52 +646,73 @@ body {
     to { height: 12px; }
 }
 
-/* Footer */
+/* Footer / Streaming Platforms */
 .panel-footer {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
-    padding: 10px 16px;
+    padding: 8px 12px;
     background: rgba(0, 0, 0, 0.45);
     border-top: 1px solid var(--border-subtle);
 }
 
-.footer-left {
-    display: inline-flex;
+.platform-links {
+    display: flex;
     align-items: center;
+    justify-content: space-between;
+    width: 100%;
     gap: 6px;
 }
 
-.pulse-indicator {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: #1db954;
-    box-shadow: 0 0 6px #1db954;
-}
-
-.footer-status {
-    font-size: 0.58rem;
-    font-weight: 700;
-    letter-spacing: 1px;
-    color: var(--text-muted);
-}
-
-.spotify-link {
+.platform-link {
     display: inline-flex;
     align-items: center;
-    gap: 5px;
-    font-size: 0.62rem;
-    font-weight: 800;
-    letter-spacing: 1px;
-    color: #1db954;
+    justify-content: center;
+    gap: 4px;
+    flex: 1;
+    padding: 5px 6px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 6px;
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    color: var(--text-muted);
     text-decoration: none;
     transition: all 0.2s ease;
+    white-space: nowrap;
 }
 
-.spotify-link:hover {
-    color: var(--neon-green);
-    text-shadow: 0 0 8px rgba(77, 255, 0, 0.6);
+.platform-link svg {
+    flex-shrink: 0;
+}
+
+.platform-link:hover {
+    color: #fff;
+    background: rgba(255, 255, 255, 0.09);
+    border-color: rgba(255, 255, 255, 0.25);
+    transform: translateY(-1px);
+}
+
+.platform-link.link-spotify:hover {
+    color: #1db954;
+    border-color: rgba(29, 185, 84, 0.45);
+    background: rgba(29, 185, 84, 0.1);
+    box-shadow: 0 0 10px rgba(29, 185, 84, 0.2);
+}
+
+.platform-link.link-apple:hover {
+    color: #fc3c44;
+    border-color: rgba(252, 60, 68, 0.45);
+    background: rgba(252, 60, 68, 0.1);
+    box-shadow: 0 0 10px rgba(252, 60, 68, 0.2);
+}
+
+.platform-link.link-yt:hover {
+    color: #ff0000;
+    border-color: rgba(255, 0, 0, 0.45);
+    background: rgba(255, 0, 0, 0.1);
+    box-shadow: 0 0 10px rgba(255, 0, 0, 0.2);
 }
 
 /* ==========================================================
@@ -899,8 +920,17 @@ body.twitch-extension-body .volume-row {
 }
 
 body.twitch-extension-body .panel-footer {
-    padding: 6px 12px !important;
-    font-size: 0.58rem !important;
+    padding: 6px 8px !important;
+}
+
+body.twitch-extension-body .platform-links {
+    gap: 5px !important;
+}
+
+body.twitch-extension-body .platform-link {
+    padding: 4px 3px !important;
+    font-size: 0.54rem !important;
+    gap: 3px !important;
 }
 
 body.twitch-extension-body #view-tracks {

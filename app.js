@@ -42,11 +42,35 @@ const viewTracks = document.getElementById('view-tracks');
 const visualizerCanvas = document.getElementById('visualizer-canvas');
 const canvasCtx = visualizerCanvas.getContext('2d');
 
-// Web Audio API Context
+// Web Audio API Frequency Analyser
 let audioCtx = null;
 let analyser = null;
 let sourceNode = null;
-let visualizerInitialized = false;
+let freqData = null;
+let isAudioContextSetup = false;
+
+function setupAudioAnalyser() {
+    if (isAudioContextSetup) return;
+    try {
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        if (!AudioCtx) return;
+
+        audioCtx = new AudioCtx();
+        analyser = audioCtx.createAnalyser();
+        analyser.fftSize = 64; // Produces 32 frequency bins
+        analyser.smoothingTimeConstant = 0.78; // Smooth, punchy response
+
+        audio.crossOrigin = "anonymous";
+        sourceNode = audioCtx.createMediaElementSource(audio);
+        sourceNode.connect(analyser);
+        analyser.connect(audioCtx.destination);
+
+        freqData = new Uint8Array(analyser.frequencyBinCount);
+        isAudioContextSetup = true;
+    } catch (e) {
+        console.warn('Web Audio API analyser note:', e);
+    }
+}
 
 // Format seconds into MM:SS
 function formatTime(seconds) {
@@ -185,6 +209,11 @@ function loadTrack(index, autoplay = false) {
 
 // Play playback
 function play() {
+    setupAudioAnalyser();
+    if (audioCtx && audioCtx.state === 'suspended') {
+        audioCtx.resume();
+    }
+
     audio.play().then(() => {
         isPlaying = true;
         updatePlayStateUI();
@@ -282,20 +311,52 @@ function renderVisualizerLoop() {
     const height = visualizerCanvas.height;
     canvasCtx.clearRect(0, 0, width, height);
 
+    let hasRealData = false;
+    if (analyser && freqData) {
+        analyser.getByteFrequencyData(freqData);
+        for (let j = 0; j < freqData.length; j++) {
+            if (freqData[j] > 0) {
+                hasRealData = true;
+                break;
+            }
+        }
+    }
+
     const barCount = 24;
     const barWidth = Math.floor(width / barCount) - 2;
     let x = 0;
 
     for (let i = 0; i < barCount; i++) {
-        const time = Date.now() * 0.007;
-        const barHeight = Math.max(3, Math.floor((Math.sin(time + i * 0.45) * 0.45 + 0.5) * height * 0.85));
+        let normalizedVal = 0;
 
+        if (hasRealData && freqData) {
+            // Map 24 bars to frequency bins (0..31), giving strong weight to bass and vocal mids
+            const binIdx = Math.min(Math.floor((i / barCount) * (freqData.length - 2)), freqData.length - 1);
+            // Non-linear perceptual scaling (boost quieter nuances, compress peaks)
+            const raw = freqData[binIdx] / 255;
+            normalizedVal = Math.pow(raw, 0.85);
+        } else {
+            // Fallback organic breathing rhythm if AudioContext is waiting or cross-origin restricted
+            const t = Date.now() * 0.005 + i * 0.35;
+            normalizedVal = (Math.sin(t) * 0.28 + Math.cos(t * 1.6) * 0.2 + 0.38);
+        }
+
+        const barHeight = Math.max(3, Math.floor(normalizedVal * height * 0.95));
+
+        // High-energy neon green to lime gradient
         const gradient = canvasCtx.createLinearGradient(0, height, 0, 0);
         gradient.addColorStop(0, '#1db954');
-        gradient.addColorStop(1, '#4dff00');
+        gradient.addColorStop(0.65, '#4dff00');
+        gradient.addColorStop(1, '#a6ff00');
 
         canvasCtx.fillStyle = gradient;
         canvasCtx.fillRect(x, height - barHeight, barWidth, barHeight);
+
+        // Crisp white studio peak cap
+        if (barHeight > 5) {
+            canvasCtx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+            canvasCtx.fillRect(x, height - barHeight, barWidth, 1.5);
+        }
 
         x += barWidth + 2;
     }
