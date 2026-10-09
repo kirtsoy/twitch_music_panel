@@ -771,9 +771,11 @@ body.twitch-extension-body .vol-tag {
 }
 
 body.twitch-extension-body .album-sub {
-    font-size: 0.55rem !important;
-    margin-top: 2px !important;
-    letter-spacing: 2px !important;
+    font-size: 0.6rem !important;
+    font-weight: 700 !important;
+    margin-top: 1px !important;
+    letter-spacing: 2.5px !important;
+    text-align: center !important;
 }
 
 body.twitch-extension-body .tab-nav {
