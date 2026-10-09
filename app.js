@@ -1,0 +1,462 @@
+/**
+ * 420 MIXTAPE (VOL. 1) - AUTONOMOUS WEB PLAYER
+ * Built for Twitch Panels & Standalone Embed
+ * KIRTSOY Ecosystem
+ */
+
+let tracks = [];
+let currentTrackIndex = 0;
+let isPlaying = false;
+let isShuffled = false;
+let isRepeating = false;
+let isMuted = false;
+let previousVolume = 0.85;
+
+// DOM Elements
+const audio = document.getElementById('audio-engine');
+const vinylDisk = document.getElementById('vinyl-disk');
+const coverImg = document.getElementById('cover-img');
+const trackIndexEl = document.getElementById('track-index');
+const trackTitleEl = document.getElementById('track-title');
+const timeCurrentEl = document.getElementById('time-current');
+const timeTotalEl = document.getElementById('time-total');
+const progressWrapper = document.getElementById('progress-wrapper');
+const progressFill = document.getElementById('progress-bar-fill');
+const progressThumb = document.getElementById('progress-thumb');
+const playPauseBtn = document.getElementById('btn-play-pause');
+const playIcon = document.getElementById('icon-play');
+const pauseIcon = document.getElementById('icon-pause');
+const prevBtn = document.getElementById('btn-prev');
+const nextBtn = document.getElementById('btn-next');
+const shuffleBtn = document.getElementById('btn-shuffle');
+const repeatBtn = document.getElementById('btn-repeat');
+const muteBtn = document.getElementById('btn-mute');
+const volOnIcon = document.getElementById('icon-vol-on');
+const volOffIcon = document.getElementById('icon-vol-off');
+const volumeSlider = document.getElementById('volume-slider');
+const tracksContainer = document.getElementById('tracks-container');
+const tabPlayerBtn = document.getElementById('tab-player-btn');
+const tabTracksBtn = document.getElementById('tab-tracks-btn');
+const viewPlayer = document.getElementById('view-player');
+const viewTracks = document.getElementById('view-tracks');
+const visualizerCanvas = document.getElementById('visualizer-canvas');
+const canvasCtx = visualizerCanvas.getContext('2d');
+
+// Web Audio API Context
+let audioCtx = null;
+let analyser = null;
+let sourceNode = null;
+let visualizerInitialized = false;
+
+// Format seconds into MM:SS
+function formatTime(seconds) {
+    if (isNaN(seconds) || seconds < 0) return '0:00';
+    const m = Math.floor(seconds / 60);
+    const s = Math.floor(seconds % 60);
+    return `${m}:${s < 10 ? '0' : ''}${s}`;
+}
+
+// Initialize Application
+async function init() {
+    try {
+        const response = await fetch('tracks.json');
+        tracks = await response.json();
+    } catch (e) {
+        console.error('Failed to load tracks.json, using fallback:', e);
+    }
+
+    renderTracklist();
+
+    // Restore volume
+    const savedVol = localStorage.getItem('kirtsoy_player_vol');
+    if (savedVol !== null) {
+        audio.volume = parseFloat(savedVol);
+        volumeSlider.value = savedVol;
+    } else {
+        audio.volume = 0.85;
+    }
+
+    // Restore last track
+    const savedTrack = localStorage.getItem('kirtsoy_player_track');
+    if (savedTrack !== null && tracks[parseInt(savedTrack)]) {
+        currentTrackIndex = parseInt(savedTrack);
+    }
+
+    loadTrack(currentTrackIndex, false);
+    setupEvents();
+}
+
+// Render Tracklist in View 2
+function renderTracklist() {
+    tracksContainer.innerHTML = '';
+    tracks.forEach((track, index) => {
+        const item = document.createElement('div');
+        item.className = `track-item ${index === currentTrackIndex ? 'active' : ''}`;
+        item.dataset.index = index;
+
+        item.innerHTML = `
+            <span class="item-num">${track.id}</span>
+            <div class="item-info">
+                <div class="item-title">${track.title}</div>
+            </div>
+            ${index === currentTrackIndex && isPlaying ? `
+                <div class="equalizer-icon">
+                    <span class="eq-bar"></span>
+                    <span class="eq-bar"></span>
+                    <span class="eq-bar"></span>
+                </div>
+            ` : ''}
+            <span class="item-dur">${track.durationStr}</span>
+        `;
+
+        item.addEventListener('click', () => {
+            currentTrackIndex = index;
+            loadTrack(currentTrackIndex, true);
+            switchTab('player');
+        });
+
+        tracksContainer.appendChild(item);
+    });
+}
+
+// Base path resolution:
+// If running inside Twitch Extension iframe (ext-twitch.tv), stream from GitHub Pages CDN.
+// Otherwise (localhost or direct GitHub Pages), use relative 'audio/'.
+function getAudioBaseUrl() {
+    const isTwitchExt = window.location.hostname.includes('twitch.tv') ||
+                        window.location.hostname.includes('ext-twitch.tv');
+    if (isTwitchExt) {
+        return 'https://kirtsoy.github.io/twitch_music_panel/audio/';
+    }
+    const urlParams = new URLSearchParams(window.location.search);
+    const cdnParam = urlParams.get('cdn');
+    if (cdnParam) return cdnParam.endsWith('/') ? cdnParam : cdnParam + '/';
+    return 'audio/';
+}
+
+// Load track by index
+function loadTrack(index, autoplay = false) {
+    if (!tracks || tracks.length === 0) return;
+    const track = tracks[index];
+    if (!track) return;
+
+    const audioBase = getAudioBaseUrl();
+    audio.src = `${audioBase}${encodeURIComponent(track.file)}`;
+    trackTitleEl.textContent = track.title;
+    trackIndexEl.textContent = `TRACK ${track.id} / ${tracks.length}`;
+    timeCurrentEl.textContent = '0:00';
+    timeTotalEl.textContent = track.durationStr;
+    progressFill.style.width = '0%';
+    progressThumb.style.left = '0%';
+
+    localStorage.setItem('kirtsoy_player_track', index.toString());
+    renderTracklist();
+
+    if (autoplay) {
+        play();
+    }
+}
+
+// Play playback
+function play() {
+    initAudioContext();
+    audio.play().then(() => {
+        isPlaying = true;
+        updatePlayStateUI();
+    }).catch(err => {
+        console.warn('Autoplay prevented:', err);
+    });
+}
+
+// Pause playback
+function pause() {
+    audio.pause();
+    isPlaying = false;
+    updatePlayStateUI();
+}
+
+// Toggle Play/Pause
+function togglePlayPause() {
+    if (isPlaying) {
+        pause();
+    } else {
+        play();
+    }
+}
+
+// Update UI according to playback state
+function updatePlayStateUI() {
+    if (isPlaying) {
+        playIcon.classList.add('hidden');
+        pauseIcon.classList.remove('hidden');
+        vinylDisk.classList.add('spinning');
+    } else {
+        playIcon.classList.remove('hidden');
+        pauseIcon.classList.add('hidden');
+        vinylDisk.classList.remove('spinning');
+    }
+    renderTracklist();
+}
+
+// Next track
+function nextTrack() {
+    if (tracks.length === 0) return;
+    if (isShuffled) {
+        let nextIndex;
+        do {
+            nextIndex = Math.floor(Math.random() * tracks.length);
+        } while (tracks.length > 1 && nextIndex === currentTrackIndex);
+        currentTrackIndex = nextIndex;
+    } else {
+        currentTrackIndex = (currentTrackIndex + 1) % tracks.length;
+    }
+    loadTrack(currentTrackIndex, true);
+}
+
+// Previous track
+function prevTrack() {
+    if (tracks.length === 0) return;
+    if (audio.currentTime > 3) {
+        // Restart current track if played > 3 seconds
+        audio.currentTime = 0;
+        return;
+    }
+    currentTrackIndex = (currentTrackIndex - 1 + tracks.length) % tracks.length;
+    loadTrack(currentTrackIndex, true);
+}
+
+// Web Audio API Visualizer Setup
+function initAudioContext() {
+    if (visualizerInitialized) {
+        if (audioCtx && audioCtx.state === 'suspended') {
+            audioCtx.resume();
+        }
+        return;
+    }
+
+    try {
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        audioCtx = new AudioContextClass();
+        analyser = audioCtx.createAnalyser();
+        analyser.fftSize = 64;
+
+        sourceNode = audioCtx.createMediaElementSource(audio);
+        sourceNode.connect(analyser);
+        analyser.connect(audioCtx.destination);
+
+        visualizerInitialized = true;
+        renderVisualizer();
+    } catch (e) {
+        console.warn('Web Audio API not supported / CORS issue:', e);
+        // Fallback animated mock visualizer
+        renderMockVisualizer();
+    }
+}
+
+// Draw real-time audio frequencies on canvas
+function renderVisualizer() {
+    if (!analyser) return;
+    requestAnimationFrame(renderVisualizer);
+
+    const bufferLength = analyser.frequencyBinCount;
+    const dataArray = new Uint8Array(bufferLength);
+    analyser.getByteFrequencyData(dataArray);
+
+    const width = visualizerCanvas.width;
+    const height = visualizerCanvas.height;
+    canvasCtx.clearRect(0, 0, width, height);
+
+    const barCount = 28;
+    const barWidth = Math.floor(width / barCount) - 2;
+    let x = 0;
+
+    for (let i = 0; i < barCount; i++) {
+        const dataIdx = Math.floor(i * (bufferLength / barCount));
+        const val = isPlaying ? dataArray[dataIdx] : 0;
+        const percent = val / 255;
+        const barHeight = Math.max(2, Math.floor(percent * height));
+
+        const gradient = canvasCtx.createLinearGradient(0, height, 0, 0);
+        gradient.addColorStop(0, '#1db954');
+        gradient.addColorStop(1, '#4dff00');
+
+        canvasCtx.fillStyle = gradient;
+        canvasCtx.fillRect(x, height - barHeight, barWidth, barHeight);
+
+        x += barWidth + 2;
+    }
+}
+
+function renderMockVisualizer() {
+    requestAnimationFrame(renderMockVisualizer);
+    const width = visualizerCanvas.width;
+    const height = visualizerCanvas.height;
+    canvasCtx.clearRect(0, 0, width, height);
+
+    const barCount = 28;
+    const barWidth = Math.floor(width / barCount) - 2;
+    let x = 0;
+
+    for (let i = 0; i < barCount; i++) {
+        let barHeight = 2;
+        if (isPlaying) {
+            const time = Date.now() * 0.005;
+            barHeight = Math.max(3, Math.floor((Math.sin(time + i * 0.4) * 0.5 + 0.5) * height * 0.9));
+        }
+
+        canvasCtx.fillStyle = '#4dff00';
+        canvasCtx.fillRect(x, height - barHeight, barWidth, barHeight);
+        x += barWidth + 2;
+    }
+}
+
+// Switch between Player and Tracklist tabs
+function switchTab(tab) {
+    if (tab === 'player') {
+        tabPlayerBtn.classList.add('active');
+        tabTracksBtn.classList.remove('active');
+        viewPlayer.classList.add('active');
+        viewTracks.classList.remove('active');
+    } else {
+        tabTracksBtn.classList.add('active');
+        tabPlayerBtn.classList.remove('active');
+        viewTracks.classList.add('active');
+        viewPlayer.classList.remove('active');
+    }
+}
+
+// Event Listeners
+function setupEvents() {
+    // Play/Pause Button
+    playPauseBtn.addEventListener('click', togglePlayPause);
+
+    // Prev / Next
+    prevBtn.addEventListener('click', prevTrack);
+    nextBtn.addEventListener('click', nextTrack);
+
+    // Shuffle
+    shuffleBtn.addEventListener('click', () => {
+        isShuffled = !isShuffled;
+        shuffleBtn.classList.toggle('active', isShuffled);
+    });
+
+    // Repeat
+    repeatBtn.addEventListener('click', () => {
+        isRepeating = !isRepeating;
+        repeatBtn.classList.toggle('active', isRepeating);
+    });
+
+    // Audio time update
+    audio.addEventListener('timeupdate', () => {
+        if (!audio.duration) return;
+        const current = audio.currentTime;
+        const total = audio.duration;
+        const percent = (current / total) * 100;
+
+        timeCurrentEl.textContent = formatTime(current);
+        progressFill.style.width = `${percent}%`;
+        progressThumb.style.left = `${percent}%`;
+    });
+
+    // Audio loaded metadata
+    audio.addEventListener('loadedmetadata', () => {
+        timeTotalEl.textContent = formatTime(audio.duration);
+    });
+
+    // Track ended
+    audio.addEventListener('ended', () => {
+        if (isRepeating) {
+            audio.currentTime = 0;
+            play();
+        } else {
+            nextTrack();
+        }
+    });
+
+    // Progress bar seeking (click & drag)
+    function seek(e) {
+        const rect = progressWrapper.getBoundingClientRect();
+        const clickX = e.clientX - rect.left;
+        const width = rect.width;
+        let percent = Math.max(0, Math.min(1, clickX / width));
+        if (audio.duration) {
+            audio.currentTime = percent * audio.duration;
+        }
+    }
+
+    progressWrapper.addEventListener('click', seek);
+
+    let isDragging = false;
+    progressWrapper.addEventListener('mousedown', (e) => {
+        isDragging = true;
+        seek(e);
+    });
+
+    window.addEventListener('mousemove', (e) => {
+        if (isDragging) seek(e);
+    });
+
+    window.addEventListener('mouseup', () => {
+        isDragging = false;
+    });
+
+    // Volume Slider
+    volumeSlider.addEventListener('input', (e) => {
+        const val = parseFloat(e.target.value);
+        audio.volume = val;
+        isMuted = val === 0;
+        updateVolumeUI(val);
+        localStorage.setItem('kirtsoy_player_vol', val.toString());
+    });
+
+    // Mute Button
+    muteBtn.addEventListener('click', () => {
+        if (isMuted) {
+            audio.volume = previousVolume > 0 ? previousVolume : 0.85;
+            volumeSlider.value = audio.volume;
+            isMuted = false;
+        } else {
+            previousVolume = audio.volume;
+            audio.volume = 0;
+            volumeSlider.value = 0;
+            isMuted = true;
+        }
+        updateVolumeUI(audio.volume);
+    });
+
+    function updateVolumeUI(val) {
+        if (val === 0) {
+            volOnIcon.classList.add('hidden');
+            volOffIcon.classList.remove('hidden');
+        } else {
+            volOnIcon.classList.remove('hidden');
+            volOffIcon.classList.add('hidden');
+        }
+    }
+
+    // Tabs
+    tabPlayerBtn.addEventListener('click', () => switchTab('player'));
+    tabTracksBtn.addEventListener('click', () => switchTab('tracks'));
+
+    // Keyboard Shortcuts
+    window.addEventListener('keydown', (e) => {
+        // Space: Play/Pause
+        if (e.code === 'Space' && e.target.tagName !== 'INPUT') {
+            e.preventDefault();
+            togglePlayPause();
+        }
+        // Arrow Right: Seek forward 5s
+        if (e.code === 'ArrowRight' && e.target.tagName !== 'INPUT') {
+            e.preventDefault();
+            audio.currentTime = Math.min(audio.duration || 0, audio.currentTime + 5);
+        }
+        // Arrow Left: Seek backward 5s
+        if (e.code === 'ArrowLeft' && e.target.tagName !== 'INPUT') {
+            e.preventDefault();
+            audio.currentTime = Math.max(0, audio.currentTime - 5);
+        }
+    });
+}
+
+// Start player on load
+document.addEventListener('DOMContentLoaded', init);

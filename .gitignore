@@ -1,0 +1,4 @@
+__pycache__/
+*.pyc
+.vscode/
+twitch_music_panel_ext.zip

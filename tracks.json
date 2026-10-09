@@ -1,0 +1,242 @@
+[
+  {
+    "id": "01",
+    "number": 1,
+    "title": "clip",
+    "artist": "KIRTSOY",
+    "album": "420 mixtape (vol. 1)",
+    "file": "01 - clip.mp3",
+    "duration": 84,
+    "durationStr": "1:24"
+  },
+  {
+    "id": "02",
+    "number": 2,
+    "title": "выпал",
+    "artist": "KIRTSOY",
+    "album": "420 mixtape (vol. 1)",
+    "file": "02 - выпал.mp3",
+    "duration": 104,
+    "durationStr": "1:44"
+  },
+  {
+    "id": "03",
+    "number": 3,
+    "title": "полезность",
+    "artist": "KIRTSOY",
+    "album": "420 mixtape (vol. 1)",
+    "file": "03 - полезность.mp3",
+    "duration": 86,
+    "durationStr": "1:26"
+  },
+  {
+    "id": "04",
+    "number": 4,
+    "title": "хаслер",
+    "artist": "KIRTSOY",
+    "album": "420 mixtape (vol. 1)",
+    "file": "04 - хаслер.mp3",
+    "duration": 152,
+    "durationStr": "2:32"
+  },
+  {
+    "id": "05",
+    "number": 5,
+    "title": "амигу",
+    "artist": "KIRTSOY",
+    "album": "420 mixtape (vol. 1)",
+    "file": "05 - амигу.mp3",
+    "duration": 242,
+    "durationStr": "4:02"
+  },
+  {
+    "id": "06",
+    "number": 6,
+    "title": "скрутить и просто дунуть",
+    "artist": "KIRTSOY",
+    "album": "420 mixtape (vol. 1)",
+    "file": "06 - скрутить и просто дунуть.mp3",
+    "duration": 132,
+    "durationStr": "2:12"
+  },
+  {
+    "id": "07",
+    "number": 7,
+    "title": "я хочу высказаться",
+    "artist": "KIRTSOY",
+    "album": "420 mixtape (vol. 1)",
+    "file": "07 - я хочу высказаться.mp3",
+    "duration": 131,
+    "durationStr": "2:11"
+  },
+  {
+    "id": "08",
+    "number": 8,
+    "title": "265",
+    "artist": "KIRTSOY",
+    "album": "420 mixtape (vol. 1)",
+    "file": "08 - 265.mp3",
+    "duration": 174,
+    "durationStr": "2:54"
+  },
+  {
+    "id": "09",
+    "number": 9,
+    "title": "налетай",
+    "artist": "KIRTSOY",
+    "album": "420 mixtape (vol. 1)",
+    "file": "09 - налетай.mp3",
+    "duration": 151,
+    "durationStr": "2:31"
+  },
+  {
+    "id": "10",
+    "number": 10,
+    "title": "24 на 7",
+    "artist": "KIRTSOY",
+    "album": "420 mixtape (vol. 1)",
+    "file": "10 - 24 на 7.mp3",
+    "duration": 115,
+    "durationStr": "1:55"
+  },
+  {
+    "id": "11",
+    "number": 11,
+    "title": "ЛЕВЕЛ АП",
+    "artist": "KIRTSOY",
+    "album": "420 mixtape (vol. 1)",
+    "file": "11 - ЛЕВЕЛ АП.mp3",
+    "duration": 122,
+    "durationStr": "2:02"
+  },
+  {
+    "id": "12",
+    "number": 12,
+    "title": "estoy bien y tu",
+    "artist": "KIRTSOY",
+    "album": "420 mixtape (vol. 1)",
+    "file": "12 - estoy bien y tu.mp3",
+    "duration": 139,
+    "durationStr": "2:19"
+  },
+  {
+    "id": "13",
+    "number": 13,
+    "title": "hybrid стиль",
+    "artist": "KIRTSOY",
+    "album": "420 mixtape (vol. 1)",
+    "file": "13 - hybrid стиль.mp3",
+    "duration": 84,
+    "durationStr": "1:24"
+  },
+  {
+    "id": "14",
+    "number": 14,
+    "title": "сам посуди",
+    "artist": "KIRTSOY",
+    "album": "420 mixtape (vol. 1)",
+    "file": "14 - сам посуди.mp3",
+    "duration": 118,
+    "durationStr": "1:58"
+  },
+  {
+    "id": "15",
+    "number": 15,
+    "title": "выгляжу на десять",
+    "artist": "KIRTSOY",
+    "album": "420 mixtape (vol. 1)",
+    "file": "15 - выгляжу на десять.mp3",
+    "duration": 101,
+    "durationStr": "1:41"
+  },
+  {
+    "id": "16",
+    "number": 16,
+    "title": "смотрю во все оба",
+    "artist": "KIRTSOY",
+    "album": "420 mixtape (vol. 1)",
+    "file": "16 - смотрю во все оба.mp3",
+    "duration": 156,
+    "durationStr": "2:36"
+  },
+  {
+    "id": "17",
+    "number": 17,
+    "title": "слишком много сделал",
+    "artist": "KIRTSOY",
+    "album": "420 mixtape (vol. 1)",
+    "file": "17 - слишком много сделал.mp3",
+    "duration": 164,
+    "durationStr": "2:44"
+  },
+  {
+    "id": "18",
+    "number": 18,
+    "title": "вернулся за урожаем",
+    "artist": "KIRTSOY",
+    "album": "420 mixtape (vol. 1)",
+    "file": "18 - вернулся за урожаем.mp3",
+    "duration": 107,
+    "durationStr": "1:47"
+  },
+  {
+    "id": "19",
+    "number": 19,
+    "title": "быть",
+    "artist": "KIRTSOY",
+    "album": "420 mixtape (vol. 1)",
+    "file": "19 - быть.mp3",
+    "duration": 118,
+    "durationStr": "1:58"
+  },
+  {
+    "id": "20",
+    "number": 20,
+    "title": "420",
+    "artist": "KIRTSOY",
+    "album": "420 mixtape (vol. 1)",
+    "file": "20 - 420.mp3",
+    "duration": 198,
+    "durationStr": "3:18"
+  },
+  {
+    "id": "21",
+    "number": 21,
+    "title": "420 mixtape (vol.1)",
+    "artist": "KIRTSOY",
+    "album": "420 mixtape (vol. 1)",
+    "file": "21 - 420 mixtape (vol.1).mp3",
+    "duration": 165,
+    "durationStr": "2:45"
+  },
+  {
+    "id": "22",
+    "number": 22,
+    "title": "я устал быть бедным",
+    "artist": "KIRTSOY",
+    "album": "420 mixtape (vol. 1)",
+    "file": "22 - я устал быть бедным.mp3",
+    "duration": 193,
+    "durationStr": "3:13"
+  },
+  {
+    "id": "23",
+    "number": 23,
+    "title": "близко",
+    "artist": "KIRTSOY",
+    "album": "420 mixtape (vol. 1)",
+    "file": "23 - близко.mp3",
+    "duration": 146,
+    "durationStr": "2:26"
+  },
+  {
+    "id": "24",
+    "number": 24,
+    "title": "День",
+    "artist": "KIRTSOY",
+    "album": "420 mixtape (vol. 1)",
+    "file": "24 - День.mp3",
+    "duration": 138,
+    "durationStr": "2:18"
+  }
+]
