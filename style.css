@@ -923,3 +923,31 @@ body.twitch-extension-body .track-item {
     padding: 6px 8px !important;
     font-size: 0.78rem !important;
 }
+
+/* Toast / Status Banner */
+.player-toast {
+    position: fixed;
+    bottom: 34px;
+    left: 8px;
+    right: 8px;
+    background: rgba(220, 38, 38, 0.94);
+    color: #ffffff;
+    font-size: 0.62rem;
+    font-weight: 600;
+    line-height: 1.3;
+    text-align: center;
+    padding: 6px 10px;
+    border-radius: 6px;
+    z-index: 999;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+.player-toast.hidden {
+    display: none;
+    opacity: 0;
+}
+

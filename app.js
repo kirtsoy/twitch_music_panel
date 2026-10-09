@@ -119,18 +119,44 @@ function renderTracklist() {
     });
 }
 
-// Base path resolution:
-// If running inside Twitch Extension iframe (ext-twitch.tv), stream from GitHub Pages CDN.
-// Otherwise (localhost or direct GitHub Pages), use relative 'audio/'.
-function getAudioBaseUrl() {
-    const isTwitchExt = window.location.hostname.includes('twitch.tv') ||
-                        window.location.hostname.includes('ext-twitch.tv');
-    if (isTwitchExt) {
-        return 'https://kirtsoy.github.io/twitch_music_panel/audio/';
+// Notification Toast Helper
+let toastTimer = null;
+function showToast(msg, duration = 6000) {
+    const toast = document.getElementById('player-toast');
+    if (!toast) return;
+    toast.textContent = msg;
+    toast.classList.remove('hidden');
+    if (toastTimer) clearTimeout(toastTimer);
+    if (duration > 0) {
+        toastTimer = setTimeout(() => {
+            toast.classList.add('hidden');
+        }, duration);
     }
+}
+
+function hideToast() {
+    const toast = document.getElementById('player-toast');
+    if (toast) toast.classList.add('hidden');
+    if (toastTimer) clearTimeout(toastTimer);
+}
+
+// Base path resolution:
+// In Twitch Extension iframe or panel.html, stream from GitHub Pages CDN.
+// Otherwise (localhost with local audio), use relative 'audio/'.
+function getAudioBaseUrl() {
+    if (window.AUDIO_BASE_URL) return window.AUDIO_BASE_URL;
+
     const urlParams = new URLSearchParams(window.location.search);
     const cdnParam = urlParams.get('cdn');
     if (cdnParam) return cdnParam.endsWith('/') ? cdnParam : cdnParam + '/';
+
+    const isTwitchExt = window.location.hostname.includes('twitch.tv') ||
+                        window.location.hostname.includes('ext-twitch.tv') ||
+                        window.location.pathname.endsWith('panel.html');
+
+    if (isTwitchExt) {
+        return 'https://kirtsoy.github.io/twitch_music_panel/audio/';
+    }
     return 'audio/';
 }
 
@@ -163,8 +189,10 @@ function play() {
         isPlaying = true;
         updatePlayStateUI();
         startVisualizer();
+        hideToast();
     }).catch(err => {
         console.warn('Playback error or user gesture required:', err);
+        showToast('Кликните ▶ для запуска аудио (требуется взаимодействие)');
     });
 }
 
@@ -334,6 +362,20 @@ function setupEvents() {
         } else {
             nextTrack();
         }
+    });
+
+    // Audio error detection (e.g. CSP blocked, network issue)
+    audio.addEventListener('error', () => {
+        console.error('Audio load error on:', audio.src, audio.error);
+        let msg = 'Ошибка загрузки аудио';
+        if (audio.error) {
+            if (audio.error.code === 4) {
+                msg = '⚠️ Добавьте https://kirtsoy.github.io в Twitch Console (Вкладка Возможности)';
+            } else if (audio.error.code === 2) {
+                msg = '⚠️ Ошибка соединения с аудио-сервером';
+            }
+        }
+        showToast(msg, 9000);
     });
 
     // Progress bar seeking (click & drag)
