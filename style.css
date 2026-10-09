@@ -693,3 +693,233 @@ body {
     color: var(--neon-green);
     text-shadow: 0 0 8px rgba(77, 255, 0, 0.6);
 }
+
+/* ==========================================================
+   TWITCH PANEL EXTENSION (EXACT 318px x 500px COMPACT SPEC)
+   ========================================================== */
+body.twitch-extension-body {
+    width: 318px !important;
+    height: 500px !important;
+    max-height: 500px !important;
+    min-height: 500px !important;
+    overflow: hidden !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: flex-start !important;
+}
+
+body.twitch-extension-body .panel-wrapper {
+    width: 318px !important;
+    max-width: 318px !important;
+    height: 500px !important;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+body.twitch-extension-body .panel-card {
+    width: 100% !important;
+    height: 500px !important;
+    border-radius: 0 !important;
+    border: none !important;
+    box-shadow: none !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
+    overflow: hidden !important;
+}
+
+body.twitch-extension-body .panel-header {
+    padding: 8px 12px 6px !important;
+}
+
+body.twitch-extension-body .badge-row {
+    padding: 2px 7px !important;
+    margin-bottom: 2px !important;
+}
+
+body.twitch-extension-body .album-logo {
+    font-size: 1.35rem !important;
+    letter-spacing: 1.5px !important;
+}
+
+body.twitch-extension-body .vol-tag {
+    font-size: 0.7rem !important;
+    padding: 1px 4px !important;
+}
+
+body.twitch-extension-body .album-sub {
+    font-size: 0.55rem !important;
+    margin-top: 2px !important;
+    letter-spacing: 2px !important;
+}
+
+body.twitch-extension-body .tab-nav {
+    margin-top: 6px !important;
+    padding: 2px !important;
+    gap: 4px !important;
+}
+
+body.twitch-extension-body .tab-btn {
+    padding: 5px 0 !important;
+    font-size: 0.65rem !important;
+}
+
+body.twitch-extension-body .panel-content {
+    padding: 6px 12px !important;
+    flex: 1 !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
+}
+
+body.twitch-extension-body .view-section {
+    height: 100% !important;
+}
+
+body.twitch-extension-body #view-player {
+    display: none;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+}
+
+body.twitch-extension-body #view-player.active {
+    display: flex !important;
+}
+
+body.twitch-extension-body .vinyl-stage {
+    width: 105px !important;
+    height: 105px !important;
+    margin: 0 auto 2px !important;
+}
+
+body.twitch-extension-body .cover-frame {
+    width: 95px !important;
+    height: 95px !important;
+    border-radius: 8px !important;
+}
+
+body.twitch-extension-body .vinyl-disk {
+    width: 95px !important;
+    height: 95px !important;
+    transform: translateX(12px) !important;
+}
+
+body.twitch-extension-body .vinyl-disk.spinning {
+    transform: translateX(22px) !important;
+}
+
+body.twitch-extension-body .vinyl-grooves {
+    width: 80px !important;
+    height: 80px !important;
+}
+
+body.twitch-extension-body .vinyl-center {
+    width: 28px !important;
+    height: 28px !important;
+}
+
+body.twitch-extension-body .track-meta {
+    margin-bottom: 2px !important;
+}
+
+body.twitch-extension-body .track-number {
+    font-size: 0.55rem !important;
+    letter-spacing: 1.2px !important;
+}
+
+body.twitch-extension-body .track-title {
+    font-size: 1.05rem !important;
+    margin: 1px 0 !important;
+}
+
+body.twitch-extension-body .track-artist {
+    font-size: 0.65rem !important;
+    letter-spacing: 1px !important;
+}
+
+body.twitch-extension-body .visualizer-container {
+    height: 16px !important;
+    margin-bottom: 2px !important;
+}
+
+body.twitch-extension-body #visualizer-canvas {
+    height: 16px !important;
+}
+
+body.twitch-extension-body .timeline-box {
+    margin-bottom: 4px !important;
+}
+
+body.twitch-extension-body .time-row {
+    font-size: 0.6rem !important;
+    margin-bottom: 2px !important;
+}
+
+body.twitch-extension-body .progress-bar-wrapper {
+    height: 10px !important;
+}
+
+body.twitch-extension-body .progress-bar-bg {
+    height: 4px !important;
+}
+
+body.twitch-extension-body .controls-row {
+    margin-bottom: 4px !important;
+    padding: 0 4px !important;
+}
+
+body.twitch-extension-body .main-play-btn {
+    width: 42px !important;
+    height: 42px !important;
+}
+
+body.twitch-extension-body .main-play-btn svg {
+    width: 20px !important;
+    height: 20px !important;
+}
+
+body.twitch-extension-body .icon-btn {
+    width: 30px !important;
+    height: 30px !important;
+}
+
+body.twitch-extension-body .icon-btn svg {
+    width: 16px !important;
+    height: 16px !important;
+}
+
+body.twitch-extension-body .volume-row {
+    padding: 3px 8px !important;
+    margin-bottom: 2px !important;
+}
+
+body.twitch-extension-body .panel-footer {
+    padding: 6px 12px !important;
+    font-size: 0.58rem !important;
+}
+
+body.twitch-extension-body #view-tracks {
+    display: none;
+    flex-direction: column;
+    height: 100%;
+}
+
+body.twitch-extension-body #view-tracks.active {
+    display: flex !important;
+}
+
+body.twitch-extension-body .tracks-scroll-container {
+    max-height: 290px !important;
+    flex: 1 !important;
+    overflow-y: auto !important;
+}
+
+body.twitch-extension-body .track-item {
+    padding: 6px 8px !important;
+    font-size: 0.78rem !important;
+}
