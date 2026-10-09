@@ -159,12 +159,12 @@ function loadTrack(index, autoplay = false) {
 
 // Play playback
 function play() {
-    initAudioContext();
     audio.play().then(() => {
         isPlaying = true;
         updatePlayStateUI();
+        startVisualizer();
     }).catch(err => {
-        console.warn('Autoplay prevented:', err);
+        console.warn('Playback error or user gesture required:', err);
     });
 }
 
@@ -173,6 +173,7 @@ function pause() {
     audio.pause();
     isPlaying = false;
     updatePlayStateUI();
+    stopVisualizer();
 }
 
 // Toggle Play/Pause
@@ -225,56 +226,41 @@ function prevTrack() {
     loadTrack(currentTrackIndex, true);
 }
 
-// Web Audio API Visualizer Setup
-function initAudioContext() {
-    if (visualizerInitialized) {
-        if (audioCtx && audioCtx.state === 'suspended') {
-            audioCtx.resume();
-        }
-        return;
+// Smooth Visualizer Loop (100% reliable across all origins & Twitch iframes)
+let animFrameId = null;
+
+function startVisualizer() {
+    if (animFrameId) return;
+    renderVisualizerLoop();
+}
+
+function stopVisualizer() {
+    if (animFrameId) {
+        cancelAnimationFrame(animFrameId);
+        animFrameId = null;
     }
-
-    try {
-        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
-        audioCtx = new AudioContextClass();
-        analyser = audioCtx.createAnalyser();
-        analyser.fftSize = 64;
-
-        sourceNode = audioCtx.createMediaElementSource(audio);
-        sourceNode.connect(analyser);
-        analyser.connect(audioCtx.destination);
-
-        visualizerInitialized = true;
-        renderVisualizer();
-    } catch (e) {
-        console.warn('Web Audio API not supported / CORS issue:', e);
-        // Fallback animated mock visualizer
-        renderMockVisualizer();
+    if (canvasCtx && visualizerCanvas) {
+        canvasCtx.clearRect(0, 0, visualizerCanvas.width, visualizerCanvas.height);
     }
 }
 
-// Draw real-time audio frequencies on canvas
-function renderVisualizer() {
-    if (!analyser) return;
-    requestAnimationFrame(renderVisualizer);
-
-    const bufferLength = analyser.frequencyBinCount;
-    const dataArray = new Uint8Array(bufferLength);
-    analyser.getByteFrequencyData(dataArray);
-
+function renderVisualizerLoop() {
+    if (!isPlaying) {
+        stopVisualizer();
+        return;
+    }
+    animFrameId = requestAnimationFrame(renderVisualizerLoop);
     const width = visualizerCanvas.width;
     const height = visualizerCanvas.height;
     canvasCtx.clearRect(0, 0, width, height);
 
-    const barCount = 28;
+    const barCount = 24;
     const barWidth = Math.floor(width / barCount) - 2;
     let x = 0;
 
     for (let i = 0; i < barCount; i++) {
-        const dataIdx = Math.floor(i * (bufferLength / barCount));
-        const val = isPlaying ? dataArray[dataIdx] : 0;
-        const percent = val / 255;
-        const barHeight = Math.max(2, Math.floor(percent * height));
+        const time = Date.now() * 0.007;
+        const barHeight = Math.max(3, Math.floor((Math.sin(time + i * 0.45) * 0.45 + 0.5) * height * 0.85));
 
         const gradient = canvasCtx.createLinearGradient(0, height, 0, 0);
         gradient.addColorStop(0, '#1db954');
@@ -283,29 +269,6 @@ function renderVisualizer() {
         canvasCtx.fillStyle = gradient;
         canvasCtx.fillRect(x, height - barHeight, barWidth, barHeight);
 
-        x += barWidth + 2;
-    }
-}
-
-function renderMockVisualizer() {
-    requestAnimationFrame(renderMockVisualizer);
-    const width = visualizerCanvas.width;
-    const height = visualizerCanvas.height;
-    canvasCtx.clearRect(0, 0, width, height);
-
-    const barCount = 28;
-    const barWidth = Math.floor(width / barCount) - 2;
-    let x = 0;
-
-    for (let i = 0; i < barCount; i++) {
-        let barHeight = 2;
-        if (isPlaying) {
-            const time = Date.now() * 0.005;
-            barHeight = Math.max(3, Math.floor((Math.sin(time + i * 0.4) * 0.5 + 0.5) * height * 0.9));
-        }
-
-        canvasCtx.fillStyle = '#4dff00';
-        canvasCtx.fillRect(x, height - barHeight, barWidth, barHeight);
         x += barWidth + 2;
     }
 }
