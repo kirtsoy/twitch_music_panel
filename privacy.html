@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy Policy - Kirtsoy Twitch Extensions</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0c0e14;
+            --card: #151821;
+            --border: #232736;
+            --accent: #9146ff;
+            --text-main: #f0f2f8;
+            --text-muted: #8b92a5;
+            --green: #00f076;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--bg);
+            color: var(--text-main);
+            line-height: 1.6;
+            padding: 40px 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 48px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+        }
+        .badge {
+            display: inline-block;
+            background: rgba(145, 70, 255, 0.15);
+            color: #b785ff;
+            border: 1px solid rgba(145, 70, 255, 0.3);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 16px;
+        }
+        h1 {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            background: linear-gradient(135deg, #fff 0%, #b5bac9 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .date {
+            color: var(--text-muted);
+            font-size: 14px;
+            margin-bottom: 32px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 16px;
+        }
+        h2 {
+            font-size: 20px;
+            margin: 28px 0 12px;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        p, ul {
+            color: #c4c9d8;
+            font-size: 15px;
+            margin-bottom: 16px;
+        }
+        ul {
+            padding-left: 24px;
+        }
+        li {
+            margin-bottom: 8px;
+        }
+        .highlight-box {
+            background: rgba(0, 240, 118, 0.08);
+            border: 1px solid rgba(0, 240, 118, 0.2);
+            border-radius: 12px;
+            padding: 16px 20px;
+            margin: 24px 0;
+            color: #e0f9ec;
+        }
+        .footer {
+            margin-top: 40px;
+            padding-top: 24px;
+            border-top: 1px solid var(--border);
+            font-size: 13px;
+            color: var(--text-muted);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="badge">Twitch Extension Compliance</div>
+        <h1>Privacy Policy</h1>
+        <div class="date">Last Updated: October 23, 2026 • Official Kirtsoy Ecosystem Extensions</div>
+
+        <div class="highlight-box">
+            <strong>Summary:</strong> Kirtsoy Twitch Extensions (including "420 Mixtape Player", "Kirtsoy Telegram Panel", and "My Insta Feed") are built with user privacy as a fundamental standard. <strong>We do NOT collect, transmit, store, track, or sell any Personally Identifiable Information (PII) from Twitch viewers.</strong>
+        </div>
+
+        <h2>1. Scope of This Policy</h2>
+        <p>This Privacy Policy applies to all Twitch extensions developed and operated by Kirill Tsoy (KIRTSOY), specifically:</p>
+        <ul>
+            <li><strong>420 Mixtape Player</strong> — Interactive web audio player for the official musical album "420 mixtape (vol. 1)".</li>
+            <li><strong>Kirtsoy Telegram Panel</strong> — Public channel news feed and chat preview bridge for Twitch viewers.</li>
+            <li><strong>My Insta Feed</strong> — Verified public Instagram stream viewer displaying recent multimedia content.</li>
+        </ul>
+
+        <h2>2. Information Collection and Usage</h2>
+        <p>Our extensions operate strictly in client display mode:</p>
+        <ul>
+            <li><strong>No Account Required:</strong> Viewers are not required to log in or link external accounts to experience the extensions.</li>
+            <li><strong>No Personal Data:</strong> We do not collect usernames, IP addresses, email addresses, Twitch IDs, or financial data.</li>
+            <li><strong>Local Storage:</strong> The audio player may store harmless local playback state (such as audio volume, shuffle state, or mute settings) locally in the viewer's browser localStorage. This data never leaves the user's computer.</li>
+        </ul>
+
+        <h2>3. Third-Party Services and CDNs</h2>
+        <p>To deliver optimized streaming media and live synchronization, the extensions connect to trusted, secure endpoints:</p>
+        <ul>
+            <li><strong>Twitch Extension Assets:</strong> Hosted and served via Twitch's official CDN (<code>ext-twitch.tv</code>).</li>
+            <li><strong>GitHub Pages CDN:</strong> Hosts audio files for the 420 Mixtape player via secure HTTPS with HTTP 206 partial range streaming.</li>
+            <li><strong>Cloudflare Workers:</strong> Acts as an encrypted serverless proxy for public channel announcements and cached Instagram feeds, preventing direct client exposure of private credentials.</li>
+        </ul>
+
+        <h2>4. Copyright & Audio Ownership</h2>
+        <p>All music, audio stems, graphical covers, artwork, and visual animations presented within the <strong>420 Mixtape Player</strong> are 100% originally created, recorded, produced, and owned by <strong>Kirill Tsoy (KIRTSOY)</strong>. Kirill Tsoy holds full master recording and publishing rights, granting perpetual, non-exclusive rights for interactive broadcast playback on Twitch.</p>
+
+        <h2>5. Children's Privacy</h2>
+        <p>Our extensions are intended for general Twitch audiences and do not knowingly solicit or collect data from children under the age of 13.</p>
+
+        <h2>6. Contact Information</h2>
+        <p>If you have any questions, inquiries, or feedback regarding this Privacy Policy or the extensions, please contact the developer:</p>
+        <ul>
+            <li><strong>Developer:</strong> Kirill Tsoy (KIRTSOY)</li>
+            <li><strong>Twitch Channel:</strong> <a href="https://twitch.tv/kirtsoy" target="_blank">twitch.tv/kirtsoy</a></li>
+            <li><strong>Email:</strong> <a href="mailto:kirill_tsoy@sfu.ca">kirill_tsoy@sfu.ca</a></li>
+            <li><strong>Website:</strong> <a href="https://kirtsoy.github.io/twitch_music_panel/" target="_blank">kirtsoy.github.io/twitch_music_panel/</a></li>
+        </ul>
+
+        <div class="footer">
+            <span>© 2026 KIRTSOY. All rights reserved.</span>
+            <span>Compliant with Twitch Developer Services Agreement</span>
+        </div>
+    </div>
+</body>
+</html>
